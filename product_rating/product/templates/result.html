@@ -1,0 +1,13 @@
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Product Rating Result</title>
+  </head>
+  <body>
+    <h1>Result for {{ product_name }}</h1>
+    <p><strong>Parsed Ingredients:</strong> {{ parsed_text }}</p>
+    <p><strong>Product Rating:</strong> {{ rating }}%</p>
+    <a href="{% url 'upload_image' %}">Upload Another Product</a>
+  </body>
+</html>
