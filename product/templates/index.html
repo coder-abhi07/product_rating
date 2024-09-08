@@ -8,6 +8,7 @@
 <body>
     {% if user.is_authenticated %}
         <h1>Welcome, {{ user.username }}!</h1>
+        <p><a href="{% url 'user_profile' %}">View Profile</a></p>
         <p><a href="{% url 'logout' %}">Logout</a></p>
         
         <h2>Upload an Image for Product Rating</h2>
@@ -34,3 +35,4 @@
     {% endif %}
 </body>
 </html>
+

@@ -217,3 +217,31 @@ def result(request):
         'parsed_text': parsed_text,
         'rating': rating
     })
+
+
+from django.contrib.auth.forms import UserChangeForm
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+
+@login_required
+def user_profile(request):
+    user = request.user  # Get the current logged-in user
+    return render(request, 'profile.html', {'user': user})
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import UserUpdateForm
+from django.contrib import messages
+
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully.')
+            return redirect('user_profile')
+    else:
+        form = UserUpdateForm(instance=request.user)
+    
+    return render(request, 'update_profile.html', {'form': form})
