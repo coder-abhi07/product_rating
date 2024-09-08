@@ -1,1 +1,1 @@
-# product-rating
+# product rating
