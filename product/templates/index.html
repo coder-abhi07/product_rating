@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Rating Upload</title>
+</head>
+<body>
+    {% if user.is_authenticated %}
+        <h1>Welcome, {{ user.username }}!</h1>
+        <p><a href="{% url 'user_profile' %}">View Profile</a></p>
+        <p><a href="{% url 'logout' %}">Logout</a></p>
+        
+        <h2>Upload an Image for Product Rating</h2>
+        
+        <!-- Form to upload the product image -->
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Input for product name -->
+            <label for="product_name">Product Name:</label>
+            <input type="text" name="product_name" id="product_name" required>
+            
+            <!-- File input for the image -->
+            <label for="image">Upload Image:</label>
+            <input type="file" name="image" id="image" accept="image/*" required>
+            
+            <!-- Submit button -->
+            <button type="submit">Upload and Process</button>
+        </form>
+
+    {% else %}
+        <h1>Welcome, Guest</h1>
+        <p>Please <a href="{% url 'login' %}">Login</a> or <a href="{% url 'signup' %}">Signup</a> to upload and rate a product.</p>
+    {% endif %}
+</body>
+</html>
+

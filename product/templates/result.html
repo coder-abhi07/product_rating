@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Rating Result</title>
+</head>
+<body>
+    <h1>Result for {{ product_name }}</h1>
+    <p><strong>Parsed Ingredients:</strong> {{ parsed_text }}</p>
+    <p><strong>Product Rating:</strong> {{ rating }}%</p>
+    <a href="{% url 'index' %}">Upload another product</a>
+</body>
+</html>

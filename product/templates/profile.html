@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Profile</title>
+</head>
+<body>
+    <h1>Your Profile</h1>
+    
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>First Name:</strong> {{ user.first_name }}</p>
+    <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Last Login:</strong> {{ user.last_login }}</p>
+    <p><strong>Superuser Status:</strong> {% if user.is_superuser %} Yes {% else %} No {% endif %}</p>
+    <p><strong>Staff Status:</strong> {% if user.is_staff %} Yes {% else %} No {% endif %}</p>
+    <p><strong>Active:</strong> {% if user.is_active %} Yes {% else %} No {% endif %}</p>
+    <p><strong>Date Joined:</strong> {{ user.date_joined }}</p>
+
+    <h2>Permissions</h2>
+    <ul>
+        {% for group in user.groups.all %}
+            <li>Group: {{ group.name }}</li>
+        {% endfor %}
+    </ul>
+    <h3>Specific Permissions:</h3>
+<ul>
+    {% for permission in user.user_permissions.all %}
+        <li>{{ permission.name }}</li>
+    {% endfor %}
+</ul>
+
+
+    <p><a href="{% url 'update_profile' %}">Change Profile</a></p>
+    <p><a href="{% url 'change_password' %}">Change Password</a></p>
+</body>
+</html>
