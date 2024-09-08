@@ -1,4 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Rating</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <br>
+    <h1>Welcome to Product Rating!</h1>
 
-<h1>{{error_message}} </h1>
+    <!-- Your main content -->
+    <main class="error-page">
+        <div class="container">
+            <div class="eyes">
+                <div class="eye">
+                    <div class="eye__pupil eye__pupil--left"></div>
+                </div>
+                <div class="eye">
+                    <div class="eye__pupil eye__pupil--right"></div>
+                </div>
+            </div>
 
-<p><a href="{% url 'index' %}">Go to the home page</a></p>
+            <div class="error-page__heading">
+                <h1 class="error-page__heading-title">Looks like you're lost</h1>
+                <p class="error-page__heading-desciption">404 error</p>
+            </div>
+
+            <a class="error-page__button" href="{% url 'index' %}" aria-label="back to home" title="back to home">Back to home</a>
+        </div>
+    </main>
+
+    <button class="color-switcher" data-theme-color-switch>&#127769;</button>
+
+    <script src="{% static 'js/scripts.js' %}"></script>
+</body>
+</html>
