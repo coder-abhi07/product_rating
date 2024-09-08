@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,5 +10,69 @@
     <p><strong>Parsed Ingredients:</strong> {{ parsed_text }}</p>
     <p><strong>Product Rating:</strong> {{ rating }}%</p>
     <a href="{% url 'index' %}">Upload another product</a>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Rating Result</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Result for {{ product_name }}</h1>
+    <p><strong>Parsed Ingredients:</strong> {{ parsed_text }}</p>
+    <p><strong>Product Rating:</strong> {{ rating }}%</p>
+
+
+    <!-- here  -->
+    {% if harmful_matched %}
+    <h2>Harmful Ingredients Found:</h2>
+    <ul>
+        {% for ingredient in harmful_matched %}
+            <li>{{ ingredient }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No harmful ingredients were found.</p>
+{% endif %}
+    <!-- to here -->
+
+    <!-- Add canvas for Chart.js -->
+    <canvas id="harmfulIngredientsChart" width="400" height="200"></canvas>
+
+    <a href="{% url 'index' %}">Upload another product</a>
+
+    <script>
+        // Data for the chart
+        const harmfulIngredientsCount = {{ harmful_ingredients_count|default:0 }};
+        const totalIngredientsCount = {{ total_ingredients_count|default:1 }};
+
+        // Chart.js setup
+        const ctx = document.getElementById('harmfulIngredientsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Harmful Ingredients', 'Safe Ingredients'],
+                datasets: [{
+                    label: 'Ingredients Count',
+                    data: [harmfulIngredientsCount, totalIngredientsCount - harmfulIngredientsCount],
+                    backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)'],
+                    borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>

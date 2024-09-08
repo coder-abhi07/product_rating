@@ -110,15 +110,38 @@ def send_image_to_ocr(image_file):
 
 from .models import HarmfulIngredient, ProductRating
 
+# def check_harmful_ingredients(text):
+#     ingredients = text.split()  # Split the OCR text into words
+#     harmful_ingredients = HarmfulIngredient.objects.all()
+
+#     harmful_count = 0
+#     total_ingredients = len(ingredients)
+
+#     for word in ingredients:
+#         if harmful_ingredients.filter(name__icontains=word).exists():
+#             harmful_count += 1
+
+#     # Calculate product rating (goodness percentage)
+#     if total_ingredients > 0:
+#         rating = 100 - ((harmful_count / total_ingredients) * 100)
+#     else:
+#         rating = 100
+
+#     return rating
+
 def check_harmful_ingredients(text):
     ingredients = text.split()  # Split the OCR text into words
     harmful_ingredients = HarmfulIngredient.objects.all()
-
+    
+    harmful_ingredients_set = set(ingredient.name.lower() for ingredient in harmful_ingredients)
+    
+    harmful_matched = []
     harmful_count = 0
     total_ingredients = len(ingredients)
 
     for word in ingredients:
-        if harmful_ingredients.filter(name__icontains=word).exists():
+        if word.lower() in harmful_ingredients_set:
+            harmful_matched.append(word)
             harmful_count += 1
 
     # Calculate product rating (goodness percentage)
@@ -127,12 +150,48 @@ def check_harmful_ingredients(text):
     else:
         rating = 100
 
-    return rating
+    return rating, harmful_matched
 
 
 # Login required decorator to protect the page
-@login_required
-@never_cache 
+# @login_required
+# @never_cache 
+# def index(request):
+#     if request.method == 'POST':
+#         uploaded_file = request.FILES.get('image')
+#         if not uploaded_file:
+#             return render(request, 'index.html', {
+#                 'error_message': 'No file uploaded. Please try again.'
+#             })
+
+#         image_content = uploaded_file.read()
+#         image_file = ContentFile(image_content, uploaded_file.name)
+
+#         parsed_text = send_image_to_ocr(image_file)
+#         if not parsed_text:
+#             return render(request, 'index.html', {
+#                 'error_message': 'Failed to process the image. Please try again.'
+#             })
+
+#         rating = check_harmful_ingredients(parsed_text)
+
+#         product_name = request.POST.get('product_name', 'Unknown Product')
+#         ProductRating.objects.create(
+#             product_name=product_name,
+#             ingredients=parsed_text,
+#             rating=rating
+#         )
+
+#         # Store result in session
+#         request.session['product_name'] = product_name
+#         request.session['parsed_text'] = parsed_text
+#         request.session['rating'] = rating
+
+#         # Redirect to result page
+#         return redirect('result')
+
+#     return render(request, 'index.html')
+
 def index(request):
     if request.method == 'POST':
         uploaded_file = request.FILES.get('image')
@@ -150,7 +209,7 @@ def index(request):
                 'error_message': 'Failed to process the image. Please try again.'
             })
 
-        rating = check_harmful_ingredients(parsed_text)
+        rating, harmful_matched = check_harmful_ingredients(parsed_text)
 
         product_name = request.POST.get('product_name', 'Unknown Product')
         ProductRating.objects.create(
@@ -163,11 +222,13 @@ def index(request):
         request.session['product_name'] = product_name
         request.session['parsed_text'] = parsed_text
         request.session['rating'] = rating
+        request.session['harmful_matched'] = harmful_matched
 
         # Redirect to result page
         return redirect('result')
 
     return render(request, 'index.html')
+
 
 
 
@@ -203,11 +264,16 @@ def user_logout(request):
     logout(request)
     return redirect('login')
 
+
 @login_required
 def result(request):
     product_name = request.session.get('product_name')
     parsed_text = request.session.get('parsed_text')
     rating = request.session.get('rating')
+
+    # Example data - replace with actual harmful ingredient count and total count
+    harmful_ingredients_count = sum(1 for word in parsed_text.split() if HarmfulIngredient.objects.filter(name__icontains=word).exists())
+    total_ingredients_count = len(parsed_text.split())
 
     if not product_name or not parsed_text or not rating:
         return redirect('index')  # Redirect back if there's no data
@@ -215,7 +281,9 @@ def result(request):
     return render(request, 'result.html', {
         'product_name': product_name,
         'parsed_text': parsed_text,
-        'rating': rating
+        'rating': rating,
+        'harmful_ingredients_count': harmful_ingredients_count,
+        'total_ingredients_count': total_ingredients_count
     })
 
 
