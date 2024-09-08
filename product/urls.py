@@ -14,4 +14,5 @@ urlpatterns = [
         template_name='change_password.html',
         success_url='/profile/'
     ), name='change_password'),  # Password change
+    path('about/', views.about, name='about'),
 ]

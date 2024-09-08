@@ -16,9 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.conf.urls import handler404, handler500, handler403, handler400
 
 urlpatterns = [
     path('admin/', admin.site.urls),
        path("", include('product.urls'))
 
 ]
+
+
+handler404 = 'product.views.custom_404_view'
+handler500 = 'product.views.custom_500_view'
+handler403 = 'product.views.custom_403_view'
+handler400 = 'product.views.custom_400_view'
