@@ -13,7 +13,7 @@ class Command(BaseCommand):
         with open(csv_file, mode='r') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                name = row.get('Substance')  # Ensure this matches your CSV header
+                name = row.get('ChemicalName')  # Ensure this matches your CSV header
                 if name:
                     HarmfulIngredient.objects.get_or_create(name=name)
         self.stdout.write(self.style.SUCCESS('Successfully imported harmful ingredients'))

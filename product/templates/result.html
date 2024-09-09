@@ -27,6 +27,15 @@
     <p><strong>Parsed Ingredients:</strong> {{ parsed_text }}</p>
     <p><strong>Product Rating:</strong> {{ rating }}%</p>
 
+    {% if rating >= 90 %}
+    <p class="emoji">😍</p>
+    {% elif rating >= 85 %}
+    <p class="emoji">😊</p>
+    {% elif rating >= 80 %}
+    <p class="emoji">🤣</p>
+    {% else %}
+    <p class="emoji">🤮</p>
+    {% endif %}
 
     <!-- here  -->
     {% if harmful_matched %}

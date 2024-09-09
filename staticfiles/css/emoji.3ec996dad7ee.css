@@ -1,0 +1,8 @@
+.emoji{
+    display: inline-block; /* Ensure the emoji is treated as an inline element */
+}
+
+.emoji{
+    font-size: 3em; /* Adjust the size as needed */
+}
+

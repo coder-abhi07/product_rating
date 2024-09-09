@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingredient List</title>
+</head>
+<body>
+    <h1>Ingredients List</h1>
+    
+    <ul>
+        {% for ingredient in ingredients %}
+            <li>
+                <a href="{% url 'ingredient_detail' pk=ingredient.pk %}">{{ ingredient.name }}</a>
+            </li>
+        {% empty %}
+            <p>No ingredients found.</p>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'index' %}">Back to Home</a>
+</body>
+</html>

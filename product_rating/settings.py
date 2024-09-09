@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-
+import dj_database_url
 import os
 from dotenv import load_dotenv, find_dotenv
 
@@ -26,7 +26,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, "product", "templates")
 SECRET_KEY = 'django-insecure-qv1mjbo_=e&$j0t^w+j0*hx8%o3!m^kchoe-nbdd$niabb7(l+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -80,12 +80,19 @@ WSGI_APPLICATION = 'product_rating.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'railway',
+#         'USER': 'postgres',
+#         'PASSWORD': 'HJdYmfacpvgLrGKoWULimkoVLcmluHEd',
+#         'HOST': 'meticulous-empathy.railway.internal',
+#         'PORT': '5432',
+#     }
+# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+    'default': dj_database_url.config(
+        default='postgresql://postgres:HJdYmfacpvgLrGKoWULimkoVLcmluHEd@junction.proxy.rlwy.net:30752/railway')}
 
 
 # Password validation
@@ -139,6 +146,9 @@ STATICFILES_DIRS=[
     os.path.join(BASE_DIR,'product/static'),
 ]
 
+# Directory where static files will be collected
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # 📁 webappexample/settings.py -----
 
@@ -165,3 +175,6 @@ LOGIN_REDIRECT_URL = '/'  # Redirect to the home page after login
 LOGOUT_REDIRECT_URL = '/'  # Redirect to the home page after logout
 LOGIN_URL = '/login/'  # URL for the login page
 
+
+STATICFILES_DIRS = [BASE_DIR/'static',]
+STATIC_ROOT = BASE_DIR/'staticfiles'

@@ -1,83 +1,12 @@
-# from django.shortcuts import render
-
-# import json
-# from authlib.integrations.django_client import OAuth
-# from django.conf import settings
-# from django.shortcuts import redirect, render
-# from django.urls import reverse
-# from urllib.parse import quote_plus, urlencode
-
-
-
-# # 👆 We're continuing from the steps above. Append this to your webappexample/views.py file.
-
-# oauth = OAuth()
-
-# oauth.register(
-#     "auth0",
-#     client_id=settings.AUTH0_CLIENT_ID,
-#     client_secret=settings.AUTH0_CLIENT_SECRET,
-#     client_kwargs={
-#         "scope": "openid profile email",
-#     },
-#     server_metadata_url=f"https://{settings.AUTH0_DOMAIN}/.well-known/openid-configuration",
-# )
-
-# # 👆 We're continuing from the steps above. Append this to your webappexample/views.py file.
-
-# def login(request):
-#     return oauth.auth0.authorize_redirect(
-#         request, request.build_absolute_uri(reverse("callback"))
-#     )
-
-# # 👆 We're continuing from the steps above. Append this to your webappexample/views.py file.
-
-# def callback(request):
-#     token = oauth.auth0.authorize_access_token(request)
-#     request.session["user"] = token
-#     return redirect(request.build_absolute_uri(reverse("index")))
-
-
-# # 👆 We're continuing from the steps above. Append this to your webappexample/views.py file.
-
-# def logout(request):
-#     request.session.clear()
-
-#     return redirect(
-#         f"https://{settings.AUTH0_DOMAIN}/v2/logout?"
-#         + urlencode(
-#             {
-#                 "returnTo": request.build_absolute_uri(reverse("index")),
-#                 "client_id": settings.AUTH0_CLIENT_ID,
-#             },
-#             quote_via=quote_plus,
-#         ),
-#     )
-
-# 👆 We're continuing from the steps above. Append this to your webappexample/views.py file.
-
-# def index(request):
-#     return render(
-#         request,
-#         "index.html",
-#         context={
-#             "session": request.session.get("user"),
-#             "pretty": json.dumps(request.session.get("user"), indent=4),
-#         },
-#     )
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
-from .models import ProductRating, HarmfulIngredient
 from django.core.files.base import ContentFile
 import io
 import requests
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
-
- # Add this to prevent caching
-
 
 
 
@@ -108,8 +37,6 @@ def send_image_to_ocr(image_file):
 
 
 
-from .models import HarmfulIngredient, ProductRating
-
 # def check_harmful_ingredients(text):
 #     ingredients = text.split()  # Split the OCR text into words
 #     harmful_ingredients = HarmfulIngredient.objects.all()
@@ -128,6 +55,29 @@ from .models import HarmfulIngredient, ProductRating
 #         rating = 100
 
 #     return rating
+
+# def check_harmful_ingredients(text):
+#     ingredients = text.split()  # Split the OCR text into words
+#     harmful_ingredients = HarmfulIngredient.objects.all()
+    
+#     harmful_ingredients_set = set(ingredient.name.lower() for ingredient in harmful_ingredients)
+    
+#     harmful_matched = []
+#     harmful_count = 0
+#     total_ingredients = len(ingredients)
+
+#     for word in ingredients:
+#         if word.lower() in harmful_ingredients_set:
+#             harmful_matched.append(word)
+#             harmful_count += 1
+
+#     # Calculate product rating (goodness percentage)
+#     if total_ingredients > 0:
+#         rating = 100 - ((harmful_count / total_ingredients) * 100)
+#     else:
+#         rating = 100
+
+#     return rating, harmful_matched
 
 def check_harmful_ingredients(text):
     ingredients = text.split()  # Split the OCR text into words
@@ -153,9 +103,6 @@ def check_harmful_ingredients(text):
     return rating, harmful_matched
 
 
-# Login required decorator to protect the page
-# @login_required
-# @never_cache 
 # def index(request):
 #     if request.method == 'POST':
 #         uploaded_file = request.FILES.get('image')
@@ -191,7 +138,9 @@ def check_harmful_ingredients(text):
 #         return redirect('result')
 
 #     return render(request, 'index.html')
-
+from .models import ProductRating
+@login_required
+@never_cache 
 def index(request):
     if request.method == 'POST':
         uploaded_file = request.FILES.get('image')
@@ -215,7 +164,7 @@ def index(request):
         ProductRating.objects.create(
             product_name=product_name,
             ingredients=parsed_text,
-            rating=rating
+            rating=rating  # Ensure this is a float or Decimal
         )
 
         # Store result in session
@@ -332,3 +281,88 @@ def custom_400_view(request, exception):
 def about(request):
     return render(request, 'about.html')
  
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+from django.core.files.base import ContentFile
+from django.views.decorators.cache import never_cache
+
+from .models import HarmfulIngredient,  IngredientReview
+from .forms import IngredientReviewForm, UserUpdateForm
+import requests
+
+# views.py
+from django.shortcuts import render, redirect
+# from .models import Review
+# from .forms import ReviewForm
+
+from django.shortcuts import render, redirect
+# from .models import Review
+# from .forms import ReviewForm
+
+# views.py
+from django.shortcuts import render, redirect, get_object_or_404
+# from .models import  Ingredient, Review
+# from .forms import ReviewForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate, logout
+from django.contrib import messages
+from .models import HarmfulIngredient
+from .forms import IngredientReviewForm
+
+from django.contrib import messages
+
+
+
+@login_required
+def submit_review(request, pk):
+    ingredient = get_object_or_404(HarmfulIngredient, pk=pk)
+    user = request.user
+    
+    # Check if the user has already reviewed this ingredient
+    existing_review = IngredientReview.objects.filter(ingredient=ingredient, user=user).first()
+
+    if existing_review:
+        # Update the existing review
+        form = IngredientReviewForm(request.POST, instance=existing_review)
+        if form.is_valid():
+            updated_review = form.save(commit=False)
+            updated_review.approved = False 
+            updated_review.save()
+            messages.success(request, 'Your review has been updated and will be approved by the admin.')
+        else:
+            messages.error(request, 'There was a problem updating your review.')
+    else:
+        # Create a new review
+        form = IngredientReviewForm(request.POST)
+        if form.is_valid():
+            new_review = form.save(commit=False)
+            new_review.ingredient = ingredient
+            new_review.user = user
+            new_review.approved = False
+            new_review.save()
+            messages.success(request, 'Your review has been submitted and will be approved by the admin.')
+        else:
+            messages.error(request, 'There was a problem submitting your review.')
+
+    return redirect('ingredient_detail', pk=pk)
+
+
+def ingredient_detail(request, pk):
+    ingredient = get_object_or_404(HarmfulIngredient, pk=pk)
+    reviews = IngredientReview.objects.filter(ingredient=ingredient, approved=True).order_by('-created_at')
+
+    
+    return render(request, 'ingredient_detail.html', {
+        'ingredient': ingredient,
+        'reviews': reviews,
+    })
+
+def ingredient_list(request):
+    ingredients = HarmfulIngredient.objects.all()
+    return render(request, 'ingredient_list.html', {'ingredients': ingredients})
