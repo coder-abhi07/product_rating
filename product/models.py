@@ -158,6 +158,7 @@ class ProductRating(models.Model):
     review = models.TextField()
     approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    ingredients = models.TextField() 
 
     def __str__(self):
         return f"{self.product_name} - {self.rating}"
