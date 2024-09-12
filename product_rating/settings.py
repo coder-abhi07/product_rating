@@ -156,10 +156,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 STATICFILES_DIRS=[
     os.path.join(BASE_DIR,'product/static'),
+    os.path.join(BASE_DIR,'static'),
 ]
 
-# Directory where static files will be collected
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # 📁 webappexample/settings.py -----
@@ -188,8 +187,6 @@ LOGOUT_REDIRECT_URL = '/'  # Redirect to the home page after logout
 LOGIN_URL = '/login/'  # URL for the login page
 
 
-STATICFILES_DIRS = [BASE_DIR/'static',]
-STATIC_ROOT = BASE_DIR/'staticfiles'
 
 LOGIN_URL = '/login/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
