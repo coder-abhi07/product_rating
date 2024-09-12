@@ -1,6 +1,8 @@
 from django.urls import path,include
 from . import views
 from django.contrib.auth import views as auth_views  # Import Django's built-in auth views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('accounts/', include('allauth.urls')),
@@ -20,4 +22,4 @@ urlpatterns = [
     path('ingredient/<int:pk>/', views.ingredient_detail, name='ingredient_detail'),  # View ingredient details and reviews
     path('ingredient/<int:pk>/review/', views.submit_review, name='submit_review'),    # Submit a review for an ingredient
     path('ingredients/', views.ingredient_list, name='ingredient_list'), 
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
