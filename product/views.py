@@ -220,12 +220,13 @@ def result(request):
     parsed_text = request.session.get('parsed_text')
     rating = request.session.get('rating')
 
+    if not product_name or not parsed_text or not rating:
+        return redirect('index')  # Redirect back if there's no data
+    
     # Example data - replace with actual harmful ingredient count and total count
     harmful_ingredients_count = sum(1 for word in parsed_text.split() if HarmfulIngredient.objects.filter(name__icontains=word).exists())
     total_ingredients_count = len(parsed_text.split())
 
-    if not product_name or not parsed_text or not rating:
-        return redirect('index')  # Redirect back if there's no data
 
     return render(request, 'result.html', {
         'product_name': product_name,
