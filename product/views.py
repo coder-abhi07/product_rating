@@ -36,25 +36,59 @@ def send_image_to_ocr(image_file):
         return None
 
 
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from fuzzywuzzy import fuzz  # For fuzzy matching
+from fuzzywuzzy import process
 
-# def check_harmful_ingredients(text):
-#     ingredients = text.split()  # Split the OCR text into words
-#     harmful_ingredients = HarmfulIngredient.objects.all()
+# Ensure you've downloaded the necessary NLTK resources
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
 
-#     harmful_count = 0
-#     total_ingredients = len(ingredients)
+def preprocess_text(text):
+    # Tokenize and remove stopwords
+    lemmatizer = WordNetLemmatizer()
+    tokens = nltk.word_tokenize(text.lower())  # Lowercase text
+    tokens = [lemmatizer.lemmatize(word) for word in tokens if word.isalpha()]  # Keep only words
+    return tokens
 
-#     for word in ingredients:
-#         if harmful_ingredients.filter(name__icontains=word).exists():
-#             harmful_count += 1
+def check_harmful_ingredients(text):
+    # Preprocess the text (tokenization, lemmatization)
+    ingredients = preprocess_text(text)
+    
+    harmful_ingredients = HarmfulIngredient.objects.all()
+    harmful_ingredients_set = set(ingredient.name.lower() for ingredient in harmful_ingredients)
+    
+    harmful_matched = []
+    harmful_count = 0
+    total_ingredients = len(ingredients)
 
-#     # Calculate product rating (goodness percentage)
-#     if total_ingredients > 0:
-#         rating = 100 - ((harmful_count / total_ingredients) * 100)
-#     else:
-#         rating = 100
+    # Set a threshold for fuzzy matching accuracy
+    fuzzy_match_threshold = 70  # Can be adjusted
 
-#     return rating
+    for word in ingredients:
+        # Direct match check
+        if word.lower() in harmful_ingredients_set:
+            harmful_matched.append(word)
+            harmful_count += 1
+        else:
+            # Fuzzy matching if no exact match
+            closest_match, score = process.extractOne(word, harmful_ingredients_set)
+            if score >= fuzzy_match_threshold:
+                harmful_matched.append(closest_match)
+                harmful_count += 1
+
+    # Calculate product rating (goodness percentage)
+    if total_ingredients > 0:
+        rating = 100 - ((harmful_count / total_ingredients) * 100)
+    else:
+        rating = 100
+
+    return rating, harmful_matched
+
+
 
 # def check_harmful_ingredients(text):
 #     ingredients = text.split()  # Split the OCR text into words
@@ -79,29 +113,58 @@ def send_image_to_ocr(image_file):
 
 #     return rating, harmful_matched
 
-def check_harmful_ingredients(text):
-    ingredients = text.split()  # Split the OCR text into words
-    harmful_ingredients = HarmfulIngredient.objects.all()
+
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from allauth.account.views import PasswordChangeView 
+
+
+@login_required
+def change_password(request):
+    if request.user.has_usable_password():
+        if request.method == 'POST':
+            form = PasswordChangeForm(request.user, request.POST)
+            if form.is_valid():
+                user = form.save()
+                update_session_auth_hash(request, user)  # Keeps the user logged in
+                messages.success(request, 'Your password has been successfully updated!')
+                return redirect('user_profile')  # Redirect to profile or another page
+            else:
+                messages.error(request, 'Please correct the error below.')
+        else:
+            form = PasswordChangeForm(request.user)
+
+        return render(request, 'change_password.html', {'form': form})
+
+    return redirect('set_password')  # If no usable password, redirect to set password view
+
+from django.contrib.auth.forms import SetPasswordForm
+
+@login_required
+def set_password(request):
+    if not request.user.has_usable_password():
+        if request.method == 'POST':
+            form = SetPasswordForm(request.user, request.POST)
+            if form.is_valid():
+                user = form.save()
+                update_session_auth_hash(request, user)  # Keeps the user logged in
+                messages.success(request, 'Your password has been successfully set!')
+                return redirect('user_profile')  # Redirect to profile or another page
+            else:
+                messages.error(request, 'Please correct the error below.')
+        else:
+            form = SetPasswordForm(request.user)
+
+        return render(request, 'set_password.html', {'form': form})
+
+    return redirect('change_password')  # If a usable password exists, redirect to change password
     
-    harmful_ingredients_set = set(ingredient.name.lower() for ingredient in harmful_ingredients)
-    
-    harmful_matched = []
-    harmful_count = 0
-    total_ingredients = len(ingredients)
-
-    for word in ingredients:
-        if word.lower() in harmful_ingredients_set:
-            harmful_matched.append(word)
-            harmful_count += 1
-
-    # Calculate product rating (goodness percentage)
-    if total_ingredients > 0:
-        rating = 100 - ((harmful_count / total_ingredients) * 100)
-    else:
-        rating = 100
-
-    return rating, harmful_matched
-
 
 # def index(request):
 #     if request.method == 'POST':

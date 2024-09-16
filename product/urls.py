@@ -3,8 +3,12 @@ from . import views
 from django.contrib.auth import views as auth_views  # Import Django's built-in auth views
 from django.conf import settings
 from django.conf.urls.static import static
+from allauth.account.views import PasswordChangeView as AllauthPasswordChangeView
+
 
 urlpatterns = [
+    path('password/change/', views.change_password, name='password_change'),
+    path('password/set/', views.set_password, name='set_password'),
     path('accounts/', include('allauth.urls')),
     path('', views.index, name='index'),
     path('login/', views.user_login, name='login'),
@@ -13,10 +17,6 @@ urlpatterns = [
     path('result/', views.result, name='result'),
     path('profile/', views.user_profile, name='user_profile'),  # User profile
     path('profile/update/', views.update_profile, name='update_profile'),  # Update profile
-    path('profile/change-password/', auth_views.PasswordChangeView.as_view(
-        template_name='change_password.html',
-        success_url='/profile/'
-    ), name='change_password'),  # Password change
     path('about/', views.about, name='about'),
 
     path('ingredient/<int:pk>/', views.ingredient_detail, name='ingredient_detail'),  # View ingredient details and reviews

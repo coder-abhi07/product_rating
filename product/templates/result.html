@@ -81,7 +81,7 @@
     {% elif rating >= 85 %}
     <p class="emoji">😊</p>
     {% elif rating >= 80 %}
-    <p class="emoji">🤣</p>
+    <p class="emoji">🤢</p>
     {% else %}
     <p class="emoji">🤮</p>
     {% endif %}
@@ -106,8 +106,12 @@
 
     <script>
         // Data for the chart
-        const harmfulIngredientsCount = {{ harmful_ingredients_count|default:0 }};
-        const totalIngredientsCount = {{ total_ingredients_count|default:1 }};
+        
+        // const harmfulIngredientsCount = {{ harmful_ingredients_count|default:0|safe }};
+        // const totalIngredientsCount = {{ total_ingredients_count|default:1|safe }};
+
+        const harmfulIngredientsCount = {{ harmful_matched|length|default:0|safe }};
+        const totalIngredientsCount = {{ parsed_text|length|default:0|safe }};
 
         // Chart.js setup
         const ctx = document.getElementById('harmfulIngredientsChart').getContext('2d');
