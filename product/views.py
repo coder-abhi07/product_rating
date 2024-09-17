@@ -36,11 +36,11 @@ def send_image_to_ocr(image_file):
         return None
 
 
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-from fuzzywuzzy import fuzz  # For fuzzy matching
-from fuzzywuzzy import process
+# import nltk
+# from nltk.corpus import stopwords
+# from nltk.stem import WordNetLemmatizer
+# from fuzzywuzzy import fuzz  # For fuzzy matching
+# from fuzzywuzzy import process
 
 # Ensure you've downloaded the necessary NLTK resources
 # nltk.download('punkt')
