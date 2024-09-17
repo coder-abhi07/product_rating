@@ -43,67 +43,42 @@ from fuzzywuzzy import fuzz  # For fuzzy matching
 from fuzzywuzzy import process
 
 # Ensure you've downloaded the necessary NLTK resources
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
+# nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.download('wordnet')
 
-def preprocess_text(text):
-    # Tokenize and remove stopwords
-    lemmatizer = WordNetLemmatizer()
-    tokens = nltk.word_tokenize(text.lower())  # Lowercase text
-    tokens = [lemmatizer.lemmatize(word) for word in tokens if word.isalpha()]  # Keep only words
-    return tokens
-
-def check_harmful_ingredients(text):
-    # Preprocess the text (tokenization, lemmatization)
-    ingredients = preprocess_text(text)
-    
-    harmful_ingredients = HarmfulIngredient.objects.all()
-    harmful_ingredients_set = set(ingredient.name.lower() for ingredient in harmful_ingredients)
-    
-    harmful_matched = []
-    harmful_count = 0
-    total_ingredients = len(ingredients)
-
-    # Set a threshold for fuzzy matching accuracy
-    fuzzy_match_threshold = 70  # Can be adjusted
-
-    for word in ingredients:
-        # Direct match check
-        if word.lower() in harmful_ingredients_set:
-            harmful_matched.append(word)
-            harmful_count += 1
-        else:
-            # Fuzzy matching if no exact match
-            closest_match, score = process.extractOne(word, harmful_ingredients_set)
-            if score >= fuzzy_match_threshold:
-                harmful_matched.append(closest_match)
-                harmful_count += 1
-
-    # Calculate product rating (goodness percentage)
-    if total_ingredients > 0:
-        rating = 100 - ((harmful_count / total_ingredients) * 100)
-    else:
-        rating = 100
-
-    return rating, harmful_matched
-
-
+# def preprocess_text(text):
+#     # Tokenize and remove stopwords
+#     lemmatizer = WordNetLemmatizer()
+#     tokens = nltk.word_tokenize(text.lower())  # Lowercase text
+#     tokens = [lemmatizer.lemmatize(word) for word in tokens if word.isalpha()]  # Keep only words
+#     return tokens
 
 # def check_harmful_ingredients(text):
-#     ingredients = text.split()  # Split the OCR text into words
-#     harmful_ingredients = HarmfulIngredient.objects.all()
+#     # Preprocess the text (tokenization, lemmatization)
+#     ingredients = preprocess_text(text)
     
+#     harmful_ingredients = HarmfulIngredient.objects.all()
 #     harmful_ingredients_set = set(ingredient.name.lower() for ingredient in harmful_ingredients)
     
 #     harmful_matched = []
 #     harmful_count = 0
 #     total_ingredients = len(ingredients)
 
+#     # Set a threshold for fuzzy matching accuracy
+#     fuzzy_match_threshold = 70  # Can be adjusted
+
 #     for word in ingredients:
+#         # Direct match check
 #         if word.lower() in harmful_ingredients_set:
 #             harmful_matched.append(word)
 #             harmful_count += 1
+#         else:
+#             # Fuzzy matching if no exact match
+#             closest_match, score = process.extractOne(word, harmful_ingredients_set)
+#             if score >= fuzzy_match_threshold:
+#                 harmful_matched.append(closest_match)
+#                 harmful_count += 1
 
 #     # Calculate product rating (goodness percentage)
 #     if total_ingredients > 0:
@@ -112,6 +87,31 @@ def check_harmful_ingredients(text):
 #         rating = 100
 
 #     return rating, harmful_matched
+
+
+
+def check_harmful_ingredients(text):
+    ingredients = text.split()  # Split the OCR text into words
+    harmful_ingredients = HarmfulIngredient.objects.all()
+    
+    harmful_ingredients_set = set(ingredient.name.lower() for ingredient in harmful_ingredients)
+    
+    harmful_matched = []
+    harmful_count = 0
+    total_ingredients = len(ingredients)
+
+    for word in ingredients:
+        if word.lower() in harmful_ingredients_set:
+            harmful_matched.append(word)
+            harmful_count += 1
+
+    # Calculate product rating (goodness percentage)
+    if total_ingredients > 0:
+        rating = 100 - ((harmful_count / total_ingredients) * 100)
+    else:
+        rating = 100
+
+    return rating, harmful_matched
 
 
 from django.contrib.auth import update_session_auth_hash
