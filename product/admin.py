@@ -1,43 +1,11 @@
-# from django.contrib import admin
-# from .models import HarmfulIngredient, IngredientReview
+from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
-# @admin.register(IngredientReview)
-# class IngredientReviewAdmin(admin.ModelAdmin):
-#     list_display = ('ingredient', 'user', 'rating', 'review_text', 'created_at',)  # Display the 'name' field in the list view
+# Customize the admin site's titles
+admin.site.site_header = _("Administration")
+admin.site.site_title = _("Administration")
+admin.site.index_title = _("Welcome to the Admin Dashboard")
 
-
-# @admin.register(HarmfulIngredient)
-# class HarmfulIngredientAdmin(admin.ModelAdmin):
-#     list_display = ('name',)  # Display the 'name' field in the list view
-
-
-# # admin.py
-# from django.contrib import admin
-# from .models import ProductRating, Review
-
-# @admin.register(ProductRating)
-# class ProductRatingAdmin(admin.ModelAdmin):
-#     list_display = ('product_name', 'rating', 'ingredients')  # Customize fields as needed
-#     search_fields = ('product_name',)
-
-# @admin.register(Review)
-# class ReviewAdmin(admin.ModelAdmin):
-#     list_display = ('user', 'product', 'review_text', 'approved')
-#     list_filter = ('approved',)
-#     search_fields = ('user__username', 'product__name')
-#     actions = ['approve_reviews', 'disapprove_reviews']
-
-#     def approve_reviews(self, request, queryset):
-#         queryset.update(approved=True)
-#     approve_reviews.short_description = 'Approve selected reviews'
-
-#     def disapprove_reviews(self, request, queryset):
-#         queryset.update(approved=False)
-#     disapprove_reviews.short_description = 'Disapprove selected reviews'
-
-
-
-# admin.py
 from django.contrib import admin
 from .models import HarmfulIngredient, IngredientReview
 
