@@ -30,7 +30,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
-
+SOCIALACCOUNT_LOGIN_ON_GET=True
 # Application definition
 
 INSTALLED_APPS = [
