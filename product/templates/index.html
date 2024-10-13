@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Rating</title>
@@ -23,6 +24,69 @@
     @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 
+@media (max-width: 767px) {
+        form#file-upload-form{
+            width: 350px;
+            height: 450px;
+        }
+      }
+      .form__group {
+  position: relative;
+  padding: 15px 0 0;
+  margin-top: 10px;
+  width: 50%;
+}
+.form__field {
+  font-family: inherit;
+  width: 100%;
+  border: 0;
+  border-bottom: 2px solid #9b9b9b;
+  outline: 0;
+  font-size: 1.3rem;
+  color: #fff;
+  padding: 7px 0;
+  background: transparent;
+  transition: border-color 0.2s;
+}
+.form__field::placeholder {
+  color: transparent;
+}
+.form__field:placeholder-shown ~ .form__label {
+  font-size: 1.3rem;
+  cursor: text;
+  top: 20px;
+}
+.form__label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 1rem;
+  color: #9b9b9b;
+}
+.form__field:focus {
+  padding-bottom: 6px;
+  font-weight: 700;
+  border-width: 3px;
+  border-image: linear-gradient(to right, #11998e, #38ef7d);
+  border-image-slice: 1;
+}
+.form__field:focus ~ .form__label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 1rem;
+  color: #11998e;
+  font-weight: 700;
+}
+/* reset input */
+.form__field:required, .form__field:invalid {
+  box-shadow: none;
+}
+
+
+      
 h2 {
   text-align: center;
   margin-top: 3rem;
@@ -102,6 +166,15 @@ p {
 .uploader #file-image.hidden {
   display: none;
 }
+input#product_name{
+margin: 20px 0px;
+    border: none;
+    border-bottom: 2px solid #000;
+    outline: none;
+    padding: 5px;
+    width: 100%;
+}
+
 .uploader #notimage {
   display: block;
   float: left;
@@ -164,6 +237,26 @@ p {
   border-color: #454cad;
   cursor: pointer;
 }
+
+.fbtn {
+  font-size:15px;
+  font-family:Arial Black;
+  width:200px;
+  height:44px;
+  border-width:1px;
+  color:#fff;
+  border-color:#2a67b6;
+  font-weight:bold;
+  border-bottom-left-radius:28px;
+  border-bottom-right-radius:28px;
+  text-shadow: -2px -2px 3px #2a2c85;
+  background:#3d6cbd;
+}
+
+.fbtn:hover {
+  background: #2a6bbf
+}
+              
 
   </style>
   {% if user.is_authenticated %}
@@ -253,7 +346,7 @@ p {
 <form id="file-upload-form" class="uploader" method="POST" enctype="multipart/form-data">
   {% csrf_token %}
   <label class =  "uploader_label_text" for="product_name">Product Name:</label>
-  <input  type="text" name="product_name" id="product_name" required>
+  <input  type="text" name="product_name" id="product_name" placeholder="XYZ" required>
   <input id="file-upload" type="file" name="image" accept="image/*" required/>
 
   <label for="file-upload" id="file-drag">
@@ -271,7 +364,7 @@ p {
       </progress>
     </div>
   </label>
-  <button type="submit">Upload and Process</button>
+  <button class = "btn" type="submit">Upload and Process</button>
 </form>
 
 
@@ -472,24 +565,22 @@ function ekUpload(){
   
        
         </section>
-        <!-- Section: Social media -->
+        
       </div>
-      <!-- Grid container -->
-    
-      <!-- Copyright -->
+      
       <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
         © <span id="currentYear"></span> Copyright:
         <a class="text-body" href="#">Product Rating</a>
     </div>
     
     <script>
-        // Get the current year
+        
         const year = new Date().getFullYear();
-        // Set the current year in the span with id 'currentYear'
+        
         document.getElementById('currentYear').textContent = year;
     </script>
     
-      <!-- Copyright -->
+      
     </footer>
   
 
