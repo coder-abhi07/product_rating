@@ -26,7 +26,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, "product", "templates")
 SECRET_KEY = 'django-insecure-qv1mjbo_=e&$j0t^w+j0*hx8%o3!m^kchoe-nbdd$niabb7(l+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'product',
-    "django_check_seo",
     'django.contrib.sitemaps',
     'django.contrib.sites',
     'allauth',
