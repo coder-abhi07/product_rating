@@ -339,3 +339,20 @@ def ingredient_detail(request, pk):
 def ingredient_list(request):
     ingredients = HarmfulIngredient.objects.all()
     return render(request, 'ingredient_list.html', {'ingredients': ingredients})
+
+
+from django.views.generic import DetailView
+from .models import HarmfulIngredient
+
+from django.shortcuts import render, get_object_or_404
+from .models import HarmfulIngredient
+
+from django.http import HttpResponse
+
+def robots_txt(request):
+    lines = [
+        "User-agent: *",
+        "Disallow: /admin/",
+        "Sitemap: https://yourwebsite.com/sitemap.xml"
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")

@@ -4,9 +4,21 @@ from django.contrib.auth import views as auth_views  # Import Django's built-in 
 from django.conf import settings
 from django.conf.urls.static import static
 from allauth.account.views import PasswordChangeView as AllauthPasswordChangeView
+from django.contrib.sitemaps.views import sitemap
+from .sitemaps import HarmfulIngredientSitemap, IngredientReviewSitemap, ProductRatingSitemap, StaticViewSitemap
+
+sitemaps = {
+    'static': StaticViewSitemap,
+    'harmful-ingredients': HarmfulIngredientSitemap,
+    'ingredient-reviews': IngredientReviewSitemap,
+    'product-ratings': ProductRatingSitemap,
+}
 
 
-urlpatterns = [
+
+urlpatterns = [ 
+    path("robots.txt", views.robots_txt, name="robots_txt"),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('password/change/', views.change_password, name='password_change'),
     path('password/set/', views.set_password, name='set_password'),
     path('accounts/', include('allauth.urls')),
