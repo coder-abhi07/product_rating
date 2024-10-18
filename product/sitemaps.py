@@ -6,6 +6,7 @@ from .models import HarmfulIngredient, IngredientReview, ProductRating
 class HarmfulIngredientSitemap(Sitemap):
     changefreq = "weekly"
     priority = 0.7
+    protocol = "https"
 
     def items(self):
         return HarmfulIngredient.objects.all().order_by('id')  # Order by ID or another relevant field
@@ -20,6 +21,7 @@ class HarmfulIngredientSitemap(Sitemap):
 class IngredientReviewSitemap(Sitemap):
     changefreq = "daily"
     priority = 0.6
+    protocol = "https"
 
     def items(self):
         return IngredientReview.objects.filter(approved=True).select_related('ingredient').order_by('created_at')  # Order by created_at
@@ -34,6 +36,7 @@ class IngredientReviewSitemap(Sitemap):
 class ProductRatingSitemap(Sitemap):
     changefreq = "daily"
     priority = 0.8
+    protocol = "https"
 
     def items(self):
         return ProductRating.objects.filter(approved=True).order_by('created_at')  # Order by created_at
@@ -48,6 +51,7 @@ class ProductRatingSitemap(Sitemap):
 class StaticViewSitemap(Sitemap):
     changefreq = "monthly"
     priority = 0.5
+    protocol = "https"
 
     def items(self):
         return [
@@ -59,6 +63,7 @@ class StaticViewSitemap(Sitemap):
             'login', 
             'signup', 
             'logout',
+            'ingredients',
         ]
 
     def location(self, item):

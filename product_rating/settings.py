@@ -27,6 +27,9 @@ SECRET_KEY = 'django-insecure-qv1mjbo_=e&$j0t^w+j0*hx8%o3!m^kchoe-nbdd$niabb7(l+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+SECURE_SSL_REDIRECT = True
+SITEMAP_PROTOCOL = 'https'
+SITE_DOMAIN = "www.product-rating.me"
 
 ALLOWED_HOSTS = ["*"]
 
@@ -54,7 +57,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-SITE_ID = 1
+SITE_ID = 4
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
