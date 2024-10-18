@@ -353,6 +353,6 @@ def robots_txt(request):
     lines = [
         "User-agent: *",
         "Disallow: /admin/",
-        "Sitemap: https://yourwebsite.com/sitemap.xml"
+        "Sitemap: https://product-rating.me/sitemap.xml"
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
