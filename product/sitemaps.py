@@ -63,7 +63,7 @@ class StaticViewSitemap(Sitemap):
             'login', 
             'signup', 
             'logout',
-            'ingredients',
+            
         ]
 
     def location(self, item):
