@@ -111,11 +111,7 @@ def set_password(request):
     return redirect('change_password')  # If a usable password exists, redirect to change password
 
 from .models import ProductRating
-<<<<<<< HEAD
 # @login_required
-=======
-@login_required
->>>>>>> 15255735cb0e14c791ad7e702006dd46c1551a3a
 @never_cache 
 def index(request):
     if request.method == 'POST':
