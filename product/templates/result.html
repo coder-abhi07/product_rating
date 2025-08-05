@@ -1,140 +1,1134 @@
-
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static '/icon/apple-touch-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static '/icon/favicon-32x32.png' %}">
-    <link rel = "icon" type = "image/png" href = "{% static '/icon/favicon.ico'%}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static '/icon/favicon-16x16.png' %}">
-    <link rel="manifest" href="{% static '/icon/site.webmanifest' %}" />
-
-   
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Rating Result</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-  <style>
-    canvas#harmfulIngredientsChart {
-      margin: 20px;
-    }
-    h1{
-      margin:20px;
-    }
-    p {
-      margin: 20px;
-    }
-   
-  </style>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <nav class="navbar bg-body-tertiary">
-          <div class="container">
-            <a class="navbar-brand" href="#">
-              <img src="{% static '/icon/favicon.ico' %}" alt="Bootstrap" width="40" height="40">
-            </a>
-          </div>
-        </nav>
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#">Product Rating </a>
+    <title>Product Rating - Rate Any Product with AI</title>
     
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'about' %}" target="_blank">About</a>
-              </li>
-              
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'user_profile' %}">Profile</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link disabled" aria-disabled="true">Welcome, {{ user.username }}</a>
-              </li>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Upload product images and get instant AI-powered ratings and reviews. The modern way to evaluate products.">
+    <meta name="keywords" content="product rating, AI review, product analysis, image upload, product evaluation">
+    <meta name="author" content="Product Rating">
     
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'ingredient_list' %}">Review</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    <h1>Result for {{ product_name }}</h1>
-    <p><strong>Parsed Text:</strong> {{ parsed_text }}</p>
-    <p><strong>Product Rating:</strong> {{ rating }}%</p>
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://productrating.com/">
+    <meta property="og:title" content="Product Rating - AI-Powered Product Reviews">
+    <meta property="og:description" content="Upload product images and get instant AI-powered ratings and reviews. The modern way to evaluate products.">
+    <meta property="og:image" content="https://productrating.com/og-image.jpg">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://productrating.com/">
+    <meta property="twitter:title" content="Product Rating - AI-Powered Product Reviews">
+    <meta property="twitter:description" content="Upload product images and get instant AI-powered ratings and reviews. The modern way to evaluate products.">
+    <meta property="twitter:image" content="https://productrating.com/og-image.jpg">
+    
+    <!-- LinkedIn -->
+    <meta property="og:site_name" content="Product Rating">
+    
+    <!-- Instagram / WhatsApp -->
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    {% if rating >= 90 %}
-    <p class="emoji">😍</p>
-    {% elif rating >= 85 %}
-    <p class="emoji">😊</p>
-    {% elif rating >= 80 %}
-    <p class="emoji">🤢</p>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static '/icon/apple-touch-icon.png' %}"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static '/icon/favicon-32x32.png' %}"/>
+    <link rel = "icon" type = "image/png" href = "{% static '/icon/favicon.ico'%}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static '/icon/favicon-16x16.png' %}"/>
+    <link rel="manifest" href="{% static '/icon/site.webmanifest' %}" />
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --bg-color: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation Styles */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .navbar {
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+        }
+
+        .nav-brand .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-color);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle, .mobile-menu-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover, .mobile-menu-toggle:hover {
+            background: var(--bg-secondary);
+            color: var(--primary-color);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .mobile-menu-toggle span {
+            width: 20px;
+            height: 2px;
+            background: currentColor;
+            transition: all 0.3s ease;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .shape-blob {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            filter: blur(40px);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(120deg); }
+            66% { transform: translateY(30px) rotate(240deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Results Section */
+        .result-section {
+            padding: 4rem 0;
+            background: var(--bg-secondary);
+        }
+
+        .result-card {
+            background: var(--bg-color);
+            border-radius: 1.5rem;
+            padding: 3rem;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Rating Display */
+        .rating-hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 1.5rem;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .rating-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rating-circle.safe {
+            background: var(--gradient-success);
+            color: white;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .rating-circle.caution {
+            background: var(--gradient-warning);
+            color: white;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+        }
+
+        .rating-circle.avoid {
+            background: var(--gradient-danger);
+            color: white;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+        }
+
+        .rating-label {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .rating-label.safe { color: var(--success-color); }
+        .rating-label.caution { color: var(--warning-color); }
+        .rating-label.avoid { color: var(--danger-color); }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .chart-container {
+            background: var(--bg-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chart-container:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .summary-card {
+            background: var(--bg-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .summary-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .summary-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .summary-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .summary-card li:last-child {
+            border-bottom: none;
+        }
+
+        .summary-card li::before {
+            content: "•";
+            color: var(--danger-color);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .summary-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Ingredient Analysis */
+        .ingredient-analysis {
+            background: var(--bg-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 3rem;
+        }
+
+        .ingredient-stats {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border-radius: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-item.harmful .stat-number { color: var(--danger-color); }
+        .stat-item.safe .stat-number { color: var(--success-color); }
+        .stat-item.total .stat-number { color: var(--primary-color); }
+
+        /* Action Section */
+        .action-section {
+            text-align: center;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            border-radius: 1.5rem;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-color);
+            color: var(--text-primary);
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-brand .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-description {
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .footer-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 0.5rem;
+            color: var(--bg-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.8;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        /* Animations */
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-scale-in {
+            animation: scaleIn 0.6s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .charts-grid,
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .ingredient-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Error Styles */
+        .error-message {
+            background: linear-gradient(135deg, #fca5a5, #f87171);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            margin: 2rem 0;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Dark Mode Toggle Animation */
+        .hidden {
+            display: none;
+        }
+
+        .theme-toggle svg {
+            transition: all 0.3s ease;
+        }
+
+        /* Pulse Animation for Rating Circle */
+        .rating-circle::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%;
+            background: inherit;
+            opacity: 0.3;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+        }
+    </style>
+</head>
+    
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="nav-brand">
+                    <div class="logo">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M16 2L20.5 11H31L22.5 18L26 27L16 21L6 27L9.5 18L1 11H11.5L16 2Z" fill="currentColor"/>
+                        </svg>
+                        <span>Product Rating</span>
+                    </div>
+                </div>
+                
+                <div class="nav-menu" id="navMenu">
+                    <a href="{% url 'index' %}" class="nav-link">Home</a>
+                    <a href="{% url 'about' %}" class="nav-link">About</a>
+                    <a href="#contact" class="nav-link">Contact</a>
+                    {% if user.is_authenticated %}
+                      <a href="{% url 'user_profile' %}" class="nav-link">Profile</a>
+                      <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+                      <a class="nav-link disabled" aria-disabled="true">Welcome, {{ user.username }}</a>
+                    {% else %}
+                      <li class="nav-link"> <a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                      <li class="nav-link"><a class="nav-link disabled" aria-disabled="true">Welcome, Guest</a></li>
+                    {% endif %}
+                </div>
+                
+                <div class="nav-actions">
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                        </svg>
+                        <svg class="moon-icon hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                    
+                    <button class="mobile-menu-toggle" id="mobileToggle" aria-label="Toggle mobile menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-shapes">
+            <div class="shape-blob" style="width: 300px; height: 300px; top: 10%; left: -10%;"></div>
+            <div class="shape-blob" style="width: 200px; height: 200px; top: 60%; right: -5%;"></div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content animate-fade-in-up">
+                <h1 class="hero-title">
+                  Analysis
+                    <span class="gradient-text">Completed !!</span>
+                </h1>
+                <p class="hero-description">
+                    This is an AI based analysis from verified sources sure you can double check the information.
+                </p>
+                <button class="btn btn-primary btn-large" onclick="document.getElementById('rating-summary').scrollIntoView({behavior: 'smooth'})">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7,10 12,15 17,10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        View Results
+                    </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
     {% else %}
-    <p class="emoji">🤮</p>
+    <section class="result-section container animate-fade-in-up" id="rating-summary">
+        <div class="result-card">
+            <h2 class="section-title">🧠 AI Product Analysis</h2>
+
+            <!-- Rating Hero -->
+            <div class="rating-hero animate-scale-in">
+                {% if rating == "🟢 Likely Safe" %}
+                    <div class="rating-circle safe">🟢</div>
+                    <p class="rating-label safe">Likely Safe</p>
+                {% elif rating == "🟡 Needs Caution" %}
+                    <div class="rating-circle caution">🟡</div>
+                    <p class="rating-label caution">Needs Caution</p>
+                {% else %}
+                    <div class="rating-circle avoid">🔴</div>
+                    <p class="rating-label avoid">Avoid</p>
+                {% endif %}
+            </div>
+
+            <!-- Additional Information -->
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h3>🧪 Harmful Ingredients (Database)</h3>
+                    <ul>
+                        {% for item in harmful_ingredients_from_db %}
+                            <li>{{ item }}</li>
+                        {% empty %}
+                            <li>No harmful ingredients found in database.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="summary-card">
+                    <h3>🧪 Harmful Ingredients</h3>
+                    <ul>
+                        {% for item in harmful_ingredients_from_gemini %}
+                            <li>{{ item }}</li>
+                        {% empty %}
+                            <li>No harmful ingredients found .</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3 class="chart-title">Overall Rating</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="ratingChart" width="250" height="250"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Ingredient Risk Profile</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="ingredientChart" width="250" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ingredient Analysis Stats -->
+            <div class="ingredient-analysis">
+                <div class="ingredient-stats">
+                    <div class="stat-item harmful">
+                        <span class="stat-number">{{ harmful_total }}</span>
+                        <span class="stat-label">Harmful Ingredients</span>
+                    </div>
+                    <div class="stat-item safe">
+                        <span class="stat-number">{{ concerns|length }}</span>
+                        <span class="stat-label">Key Concerns</span>
+                    </div>
+                    <div class="stat-item total">
+                        <span class="stat-number">AI</span>
+                        <span class="stat-label">Powered Analysis</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Grid -->
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h3>⚠️ Key Concerns</h3>
+                    <ul>
+                        {% for concern in concerns %}
+                            <li>{{ concern }}</li>
+                        {% empty %}
+                            <li>No major concerns identified</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="summary-card">
+                    <h3>🩺 Recommendation</h3>
+                    <p>{{ recommendation|default:"No specific recommendation available." }}</p>
+                </div>
+            </div>
+
+            <!-- Action Section -->
+            <div class="action-section">
+                <h3>Want to analyze another product?</h3>
+                <a href="{% url 'index' %}" class="btn btn-primary btn-large">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7,10 12,15 17,10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Upload Another Product
+                </a>
+            </div>
+        </div>
+    </section>
     {% endif %}
 
-    <!-- here  -->
-    {% if harmful_matched %}
-    <h2>Harmful Ingredients Found:</h2>
-    <ul>
-        {% for ingredient in harmful_matched %}
-            <li>{{ ingredient }}</li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No harmful ingredients were found.</p>
-{% endif %}
-    <!-- to here -->
-
-    <!-- Add canvas for Chart.js -->
-    <canvas id="harmfulIngredientsChart" width="400" height="200"></canvas>
-
-    <a href="{% url 'index' %}">Upload another product</a>
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M16 2L20.5 11H31L22.5 18L26 27L16 21L6 27L9.5 18L1 11H11.5L16 2Z" fill="currentColor"/>
+                        </svg>
+                        <span>Product Rating</span>
+                    </div>
+                    <p class="footer-description">AI-powered product analysis for smarter shopping decisions</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">Connect With Us</h4>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/this_isabhi07" class="social-link" aria-label="Instagram">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987 6.62 0 11.987-5.367 11.987-11.987C24.014 5.367 18.637.001 12.017.001zM8.23 20.1c-2.326 0-4.212-1.886-4.212-4.212V8.112c0-2.326 1.886-4.212 4.212-4.212h7.54c2.326 0 4.212 1.886 4.212 4.212v7.776c0 2.326-1.886 4.212-4.212 4.212H8.23z"/>
+                                <path d="M12.017 7.075a4.912 4.912 0 100 9.825 4.912 4.912 0 000-9.825zM16.596 6.8a1.146 1.146 0 11-2.292 0 1.146 1.146 0 012.292 0z"/>
+                            </svg>
+                        </a>
+                        <a href="https://twitter.com/coder_abhi07" class="social-link" aria-label="Twitter">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                            </svg>
+                        </a>
+                        <a href="https://www.linkedin.com/in/abhishek-kumar-573418164/" class="social-link" aria-label="LinkedIn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                        </a>
+                        <a href="mailto:ak0188644@gmail.com" class="social-link" aria-label="Email">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Product Rating. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // Data for the chart
-        
-        // const harmfulIngredientsCount = {{ harmful_ingredients_count|default:0|safe }};
-        // const totalIngredientsCount = {{ total_ingredients_count|default:1|safe }};
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const sunIcon = document.querySelector('.sun-icon');
+        const moonIcon = document.querySelector('.moon-icon');
 
-        const harmfulIngredientsCount = {{ harmful_matched|length|default:0|safe }};
-        const totalIngredientsCount = {{ parsed_text|length|default:0|safe }};
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
 
-        // Chart.js setup
-        const ctx = document.getElementById('harmfulIngredientsChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Harmful Ingredients', 'Safe Ingredients'],
-                datasets: [{
-                    label: 'Ingredients Count',
-                    data: [harmfulIngredientsCount, totalIngredientsCount - harmfulIngredientsCount],
-                    backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)'],
-                    borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+        if (currentTheme === 'dark') {
+            sunIcon.classList.add('hidden');
+            moonIcon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            if (newTheme === 'dark') {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
             }
         });
+
+        // Mobile Menu Toggle
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        mobileToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+            this.classList.toggle('active');
+        });
+
+        // Chart.js Configuration
+        document.addEventListener('DOMContentLoaded', function() {
+            // Rating Chart
+            const ratingCtx = document.getElementById('ratingChart');
+            if (ratingCtx) {
+                const ratingValue = "{{ rating }}";
+                let ratingScore = 0;
+                let ratingColor = '#f59e0b';
+
+                if (ratingValue.includes('🟢') || ratingValue.includes('Safe')) {
+                    ratingScore = 85;
+                    ratingColor = '#10b981';
+                } else if (ratingValue.includes('🟡') || ratingValue.includes('Caution')) {
+                    ratingScore = 50;
+                    ratingColor = '#f59e0b';
+                } else if (ratingValue.includes('🔴') || ratingValue.includes('Avoid')) {
+                    ratingScore = 15;
+                    ratingColor = '#ef4444';
+                }
+
+                new Chart(ratingCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Rating', 'Remaining'],
+                        datasets: [{
+                            data: [ratingScore, 100 - ratingScore],
+                            backgroundColor: [ratingColor, '#e5e7eb'],
+                            borderWidth: 0,
+                            cutout: '75%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { enabled: false }
+                        }
+                    }
+                });
+            }
+
+            // Ingredient Chart
+            const ingredientCtx = document.getElementById('ingredientChart');
+            if (ingredientCtx) {
+                const harmfulCount = {{ harmful_total }};
+                const safeCount = Math.max(1, 10 - harmfulCount);
+
+                new Chart(ingredientCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Harmful', 'Safe'],
+                        datasets: [{
+                            data: [harmfulCount, safeCount],
+                            backgroundColor: ['#ef4444', '#10b981'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff',
+                            cutout: '60%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    font: {
+                                        size: 12,
+                                        weight: '500'
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.label + ': ' + context.parsed + ' ingredients';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.chart-container, .summary-card, .ingredient-analysis').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
     </script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 </body>
 </html>
+
+            

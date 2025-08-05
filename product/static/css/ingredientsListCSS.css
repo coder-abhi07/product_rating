@@ -1,10 +1,74 @@
 /* (A) TOGGLE VIEW BUTTONS */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Product Rating Website Design System */
+:root {
+  /* Green Theme Colors */
+  --primary: 142 76% 36%;          /* Deep Green */
+  --primary-light: 142 69% 58%;    /* Medium Green */
+  --primary-dark: 142 84% 24%;     /* Darker Green */
+  --primary-glow: 142 76% 36%;     /* Primary with glow */
+  
+  /* Neutral Colors */
+  --background: 0 0% 98%;          /* Off-white */
+  --surface: 0 0% 100%;            /* Pure white */
+  --foreground: 220 13% 9%;        /* Dark text */
+  --muted: 220 13% 46%;            /* Gray text */
+  --border: 220 13% 91%;           /* Light border */
+  
+  /* Accent Colors */
+  --accent: 45 93% 47%;            /* Warm accent */
+  --success: 142 76% 36%;          /* Success green */
+  --warning: 38 92% 50%;           /* Warning orange */
+  --danger: 0 84% 60%;             /* Error red */
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+  --gradient-hero: linear-gradient(135deg, hsl(var(--primary-dark)), hsl(var(--primary)));
+  --gradient-card: linear-gradient(145deg, hsl(var(--surface)), hsl(220 13% 96%));
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px hsl(var(--primary) / 0.1);
+  --shadow-md: 0 4px 6px -1px hsl(var(--primary) / 0.1), 0 2px 4px -1px hsl(var(--primary) / 0.06);
+  --shadow-lg: 0 10px 15px -3px hsl(var(--primary) / 0.1), 0 4px 6px -2px hsl(var(--primary) / 0.05);
+  --shadow-glow: 0 0 20px hsl(var(--primary-glow) / 0.3);
+  
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  
+  /* Transitions */
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+[data-theme="dark"] {
+  /* Dark Theme Colors */
+  --background: 220 13% 9%;        /* Dark background */
+  --surface: 220 13% 11%;          /* Dark surface */
+  --foreground: 0 0% 98%;          /* Light text */
+  --muted: 220 9% 46%;             /* Gray text */
+  --border: 220 13% 18%;           /* Dark border */
+  
+  --gradient-card: linear-gradient(145deg, hsl(var(--surface)), hsl(220 13% 14%));
+  --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.3);
+  --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.3), 0 2px 4px -1px hsl(0 0% 0% / 0.2);
+  --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.3), 0 4px 6px -2px hsl(0 0% 0% / 0.2);
+}
+
+[data-theme="dark"] .text-danger {
+    color: hsl(var(--danger) / 0.9);
+    background: hsl(var(--danger) / 0.15);
+    border-left-color: hsl(var(--danger));
+}
 
 input.lg-list, input.lg-grid { display: none; }
 label.lg-tog {
   display: inline-block;
   font-size: 24px; padding: 10px;
-  color: #fff; background: #2c6fd3;
+  color: #fff; background: green;
   cursor: pointer;
 }
  
@@ -30,7 +94,11 @@ input.lg-grid:checked + ul.lg-list {
 input.lg-grid:checked + .lg-list li {
   margin: 5px;
 }
+a{
+  text-decoration: none; 
+  color: green;
 
+}
 /* (X) DOES NOT MATTER */
 /* (X1) LAYOUT COSMETICS */
 * { box-sizing: border-box; }
@@ -39,13 +107,12 @@ input.lg-grid:checked + .lg-list li {
   padding: 0; margin: 0; border: 0;
   min-height: 100vh;
   display: flex; justify-content: center; align-items: center;
-  background: url(https://images.unsplash.com/photo-1592741446742-a8b5de4882b7?crop=entropy&cs=srgb&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MDczMDgxOTZ8&ixlib=rb-4.0.3&q=85);
   background-size: cover;
   background-position: center;
   backdrop-filter: blur(10px);
 }
 #cbwrap {
-  background: rgba(255, 255, 255, 0.9);
+  
   width: 600px; padding: 20px;
   border-radius: 10px;
 }

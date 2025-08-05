@@ -26,7 +26,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, "product", "templates")
 SECRET_KEY = 'django-insecure-qv1mjbo_=e&$j0t^w+j0*hx8%o3!m^kchoe-nbdd$niabb7(l+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 SECURE_SSL_REDIRECT = False
 SITEMAP_PROTOCOL = 'https'
 SITE_DOMAIN = "www.product-rating.me"
@@ -57,7 +57,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-SITE_ID = 4
+SITE_ID = 7
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -111,11 +111,15 @@ WSGI_APPLICATION = 'product_rating.wsgi.application'
 # }
 
 
+import dj_database_url
+
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgresql://neondb_owner:npg_5NuKMJSYFTm1@ep-billowing-frost-a836atad-pooler.eastus2.azure.neon.tech/neondb?sslmode=require'
-        )
-    }
+    'default': dj_database_url.parse(
+        'postgresql://neondb_owner:npg_4gLTWyB9lrQt@ep-flat-shape-abs9mg7h-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require',
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
 
 
 
@@ -180,7 +184,7 @@ ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
 
-
+GEMINI_API_KEY=os.environ.get("GEMINI_API_KEY")
 # Load Auth0 application settings into memory
 AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
 AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID")
@@ -213,3 +217,4 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+
